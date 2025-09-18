@@ -11,8 +11,8 @@ const PORT = process.env.PORT || 8080;
 
 // ✔️ set your single allowed origin from env (no trailing slash)
 const ALLOWED_ORIGINS = [
-  process.env.CORS_ORIGIN,        // prod Vercel
-  'http://localhost:5173',        // dev (remove if you don't want local)
+  process.env.CORS_ORIGIN, // prod Vercel
+  "http://localhost:5173", // dev (remove if you don't want local)
 ].filter(Boolean);
 
 function corsOrigin(origin, callback) {
@@ -26,13 +26,16 @@ async function startServer() {
   const app = express();
 
   // 🔒 CORS restricted to the allowlist above
-  app.use(cors({
-    origin: corsOrigin,
-    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: false, // set true only if you start using cookies/auth
-  }));
-  app.options('*', cors({ origin: corsOrigin })); // preflight
+  app.use(
+    cors({
+      origin: corsOrigin,
+      methods: ["GET", "POST", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+      credentials: false,
+      preflightContinue: false, // let cors end the preflight
+      optionsSuccessStatus: 204,
+    })
+  );
 
   app.use(express.json());
 
@@ -62,7 +65,9 @@ async function startServer() {
   app.use("/api", chatRouter);
 
   app.listen(PORT, "0.0.0.0", () =>
-    console.log(`🌐 Server listening on ${PORT} | Allowed: ${ALLOWED_ORIGINS.join(", ")}`)
+    console.log(
+      `🌐 Server listening on ${PORT} | Allowed: ${ALLOWED_ORIGINS.join(", ")}`
+    )
   );
 }
 
