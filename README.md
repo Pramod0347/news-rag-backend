@@ -39,6 +39,7 @@ Multi-turn context: last few conversation turns are included in prompts
 Strict, context-first prompt: answers come from retrieved docs; otherwise a safe fallback
 
 Scripts to ingest, embed, and index news
+UpdateNews.js script auto-fetches latest news into articles.json for the RAG pipeline.
 
 🗂️ Folder Structure
 src/
