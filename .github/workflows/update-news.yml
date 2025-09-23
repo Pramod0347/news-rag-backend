@@ -1,4 +1,4 @@
-name: Update News + Embeddings + Qdrant
+name: Update News Pipeline
 
 on:
   schedule:
@@ -6,21 +6,29 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-pipeline:
+  update-news:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: '18'
 
-      - name: Install deps
-        run: npm install
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Run pipeline
+      - name: Create .env file from secrets
+        run: |
+          echo "JINA_API_KEY=${{ secrets.JINA_API_KEY }}" >> .env
+          echo "QDRANT_URL=${{ secrets.QDRANT_URL }}" >> .env
+          echo "QDRANT_API_KEY=${{ secrets.QDRANT_API_KEY }}" >> .env
+          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
+
+      - name: Run news pipeline
         run: node src/services/pipeline.js
 
       - name: Commit & push updated JSON
