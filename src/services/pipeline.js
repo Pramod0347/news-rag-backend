@@ -1,5 +1,18 @@
-import "./updateNews.js";
-import "./generateEmbeddings.js";
-import "./pushToQdrant.js";
+const { updateNews } = require("./updateNews");
+const { generateEmbeddings } = require("./generateEmbeddings");
+const { pushToQdrant } = require("./pushToQdrant");
 
-console.log("🚀 Full pipeline complete: News updated, embeddings generated, Qdrant synced.");
+async function runPipeline() {
+  console.log("⏳ Updating news...");
+  await updateNews();
+
+  console.log("⏳ Generating embeddings...");
+  await generateEmbeddings();
+
+  console.log("⏳ Pushing to Qdrant...");
+  await pushToQdrant();
+
+  console.log("✅ Pipeline complete!");
+}
+
+runPipeline().catch(console.error);

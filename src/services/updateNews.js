@@ -1,19 +1,10 @@
 const Parser = require("rss-parser");
 const fs = require("fs");
+const path = require("path");
+
 const parser = new Parser();
 
-async function fetchNews(feedUrl) {
-  const feed = await parser.parseURL(feedUrl);
-
-  return feed.items.map(item => ({
-    title: item.title,
-    link: item.link,
-    pubDate: item.pubDate,
-    content: item.contentSnippet || item.content,
-  }));
-}
-
-async function main() {
+async function updateNews() {
   const feeds = [
     "http://feeds.bbci.co.uk/news/rss.xml",
     "http://rss.cnn.com/rss/edition.rss",
@@ -22,19 +13,25 @@ async function main() {
 
   let allArticles = [];
 
-  // Fetch latest from all feeds
   for (const url of feeds) {
-    const articles = await fetchNews(url);
+    const feed = await parser.parseURL(url);
+    const articles = feed.items.map(item => ({
+      title: item.title,
+      link: item.link,
+      pubDate: item.pubDate,
+      content: item.contentSnippet || item.content,
+    }));
     allArticles = [...allArticles, ...articles];
   }
 
-  // Remove duplicates by link
   const uniqueArticles = Array.from(
     new Map(allArticles.map(a => [a.link, a])).values()
   );
 
-  fs.writeFileSync("articles.json", JSON.stringify(uniqueArticles, null, 2));
-  console.log(`✅ Saved ${uniqueArticles.length} unique articles to articles.json`);
+  const filePath = path.join(__dirname, "articles.json");
+  fs.writeFileSync(filePath, JSON.stringify(uniqueArticles, null, 2));
+
+  console.log(`✅ Saved ${uniqueArticles.length} unique articles to ${filePath}`);
 }
 
-main().catch(console.error);
+module.exports = { updateNews };
