@@ -1,18 +1,5 @@
-import { updateNews } from "./updateNews.js";
-import { generateEmbeddings } from "./generateEmbeddings.js";
-import { pushToQdrant } from "./pushToQdrant.js";
+import "./updateNews.js";
+import "./generateEmbeddings.js";
+import "./pushToQdrant.js";
 
-async function runPipeline() {
-  console.log("⏳ Updating news...");
-  await updateNews();
-
-  console.log("⏳ Generating embeddings...");
-  await generateEmbeddings();
-
-  console.log("⏳ Pushing to Qdrant...");
-  await pushToQdrant();
-
-  console.log("✅ Pipeline complete!");
-}
-
-runPipeline().catch(console.error);
+console.log("🚀 Full pipeline complete: News updated, embeddings generated, Qdrant synced.");
