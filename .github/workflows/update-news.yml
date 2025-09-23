@@ -1,12 +1,12 @@
-name: Update News JSON
+name: Update News + Embeddings + Qdrant
 
 on:
   schedule:
     - cron: "0 6 */2 * *"   # every 2 days at 6 AM UTC
-  workflow_dispatch:        # allows manual trigger too
+  workflow_dispatch:
 
 jobs:
-  update-news:
+  update-pipeline:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -20,13 +20,13 @@ jobs:
       - name: Install deps
         run: npm install
 
-      - name: Run update script
-        run: node src/services/updateNews.js
+      - name: Run pipeline
+        run: node src/services/pipeline.js
 
-      - name: Commit & push changes
+      - name: Commit & push updated JSON
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add .
-          git commit -m "Auto-update news JSON"
+          git add src/services/articles.json src/services/articles_with_embeddings.json
+          git commit -m "Auto-update news, embeddings, and Qdrant sync" || echo "No changes"
           git push
